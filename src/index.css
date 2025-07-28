@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  html, body, #root, #root * {
+    font-family: "Playfair Display", serif !important;
+  }
+}
