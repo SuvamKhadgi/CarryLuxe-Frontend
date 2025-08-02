@@ -65,7 +65,7 @@ const Home = () => {
             );
             setSearchResults(response.data);
         } catch (error) {
-            console.error("Error fetching search results:", error);
+            // console.error("Error fetching search results:", error);
             setSearchResults([]);
             toast.error("Failed to fetch search results");
         }
@@ -114,7 +114,7 @@ const Home = () => {
                         position: "top-center",
                         autoClose: 3000,
                     });
-                    console.error("Error adding to cart:", error.response?.data || error.message);
+                    // console.error("Error adding to cart:", error.response?.data || error.message);
                 },
             }
         );

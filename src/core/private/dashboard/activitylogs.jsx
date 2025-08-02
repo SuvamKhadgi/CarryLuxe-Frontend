@@ -53,7 +53,7 @@ const ActivityLog = () => {
       const data = await response.json();
       setLogs(data);
     } catch (error) {
-      console.error('Error fetching logs:', error);
+      // console.error('Error fetching logs:', error);
       setError(error.message);
       toast.error('Failed to fetch activity logs');
     } finally {

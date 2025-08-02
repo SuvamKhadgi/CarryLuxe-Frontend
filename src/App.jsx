@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { CSRFProvider } from "./contexts/CSRFContext";
 import Additems from "./core/private/all items/add_items";
 import Allitems from "./core/private/all items/allitems";
 import Allorder from "./core/private/all order/allorder";
@@ -8,6 +9,7 @@ import Users from "./core/private/all users/allusers";
 import Barchart from "./core/private/charts/barchart";
 import Piechart from "./core/private/charts/piechart";
 import AdminContactUI from "./core/private/contactus/admincontactus";
+import ActivityLog from "./core/private/dashboard/activitylogs";
 import Dashboard from "./core/private/dashboard/dashboard";
 import FAQ from "./core/public/FAQ/faq";
 import Contactus from "./core/public/contackus/contactus";
@@ -27,7 +29,6 @@ import Wishlist from "./core/public/product/wishlist";
 import BabyCare from "./core/public/product/womenbag";
 import Profile from "./core/public/profile/profile";
 import SearchResults from "./core/public/search/searchresult";
-import ActivityLog from "./core/private/dashboard/activitylogs";
 
 const Home = lazy(() => import("./core/public/home/home"));
 const Login = lazy(() => import("./core/public/creads/login_page"));
@@ -293,7 +294,9 @@ function App() {
     return (
         <>
             <QueryClientProvider client={queryClient}>
-                <RouterProvider router={router} />
+                <CSRFProvider>
+                    <RouterProvider router={router} />
+                </CSRFProvider>
             </QueryClientProvider>
         </>
     );

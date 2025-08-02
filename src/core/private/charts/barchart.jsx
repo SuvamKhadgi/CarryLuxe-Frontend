@@ -25,7 +25,7 @@ const BarChart = () => {
                     orders: data.orders || 45
                 });
             } catch (error) {
-                console.error('Error fetching stats:', error);
+                // console.error('Error fetching stats:', error);
             }
         };
         fetchStats();

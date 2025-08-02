@@ -36,7 +36,7 @@ const Dashboard = () => {
           navigate('/', { replace: true });
         }
       } catch (error) {
-        console.error('Error checking auth:', error);
+        // console.error('Error checking auth:', error);
         toast.error('Please log in');
         navigate('/login', { replace: true });
       } finally {
@@ -67,7 +67,7 @@ const Dashboard = () => {
           orders: data.orders || 45,
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        // console.error('Error fetching stats:', error);
         toast.error('Error loading dashboard stats');
       }
     };
@@ -169,7 +169,7 @@ const Dashboard = () => {
     <div className="flex overflow-hidden h-screen">
       <Side />
       <div className="flex-1 p-6 bg-gray-100">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Admin Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Dashboard</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-4 rounded-lg shadow-md">

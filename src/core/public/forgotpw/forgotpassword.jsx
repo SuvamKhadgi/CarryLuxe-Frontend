@@ -1,9 +1,10 @@
+import DOMPurify from 'dompurify';
 import { useState } from 'react';
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DOMPurify from 'dompurify';
 import Footer from '../../../components/footer';
 import Navbar from '../../../components/navbar';
+import { postWithCSRF } from '../../../utils/api';
 
 export default function ForgotPasswordForm() {
     const [email, setEmail] = useState('');
@@ -18,14 +19,10 @@ export default function ForgotPasswordForm() {
 
         setIsSubmitting(true);
         try {
-            const response = await fetch('https://localhost:3000/api/creds/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email: sanitizedEmail }),
-                credentials: 'include',
-            });
+            const response = await postWithCSRF(
+                'https://localhost:3000/api/creds/forgot-password',
+                { email: sanitizedEmail }
+            );
 
             const data = await response.json();
             if (response.ok) {
@@ -34,7 +31,7 @@ export default function ForgotPasswordForm() {
                 toast.error(data.message || "Failed to send reset link");
             }
         } catch (error) {
-            console.error("Error sending reset link:", error);
+            // console.error("Error sending reset link:", error);
             toast.error("Error sending reset link");
         } finally {
             setIsSubmitting(false);
@@ -113,7 +110,7 @@ export default function ForgotPasswordForm() {
             <ToastContainer
                 position="top-right"
                 autoClose={6000}
-                style={{ top: "8rem" }} 
+                style={{ top: "8rem" }}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick

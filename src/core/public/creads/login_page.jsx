@@ -26,7 +26,7 @@ const LoginPage = () => {
       { email, password, recaptchaToken },
       {
         onSuccess: (response) => {
-          console.log('Full response:', response.data); // Debug the response
+          // console.log('Full response:', response.data); // Debug the response
           if (response.data.mfaRequired) {
             toast.info('Please verify MFA code sent to your email.');
             navigate('/mfa-verify', { state: { email } });
@@ -37,13 +37,13 @@ const LoginPage = () => {
             if (response.data.token) {
               try {
                 const decodedToken = jwtDecode(response.data.token);
-                console.log('Decoded token:', decodedToken); // Debug token
+                // console.log('Decoded token:', decodedToken); // Debug token
                 role = decodedToken.role || role; // Use token role if available
               } catch (error) {
-                console.error('Error decoding token:', error);
+                // console.error('Error decoding token:', error);
               }
             }
-            console.log('User role:', role);
+            // console.log('User role:', role);
             navigate(role === 'admin' ? '/admindashboard' : '/');
           }
         },

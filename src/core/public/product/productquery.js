@@ -1,11 +1,60 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { getCSRFToken, refreshCSRFToken } from "../../../utils/csrf";
 
 // Secure axios instance: cookie-based auth
 const secureAxios = axios.create({
   baseURL: "https://localhost:3000/api",
   withCredentials: true,
 });
+
+// Add CSRF token interceptor to secureAxios instance
+secureAxios.interceptors.request.use(async (config) => {
+  const isAuthEndpoint = config.url?.includes('/creds/login') ||
+    config.url?.includes('/creds/signup') ||
+    config.url?.includes('/creds/logout') ||
+    config.url?.includes('/login') ||
+    config.url?.includes('/signup') ||
+    config.url?.includes('/logout');
+
+  // Add CSRF token to non-GET requests (except auth endpoints)
+  if (config.method !== 'get' && !isAuthEndpoint) {
+    try {
+      const csrfToken = await getCSRFToken();
+      if (csrfToken) {
+        config.headers['X-CSRF-Token'] = csrfToken;
+      }
+    } catch (error) {
+      console.warn('Failed to get CSRF token for productquery secureAxios:', error);
+    }
+  }
+  return config;
+});
+
+// Response interceptor for CSRF token errors
+secureAxios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    // Handle CSRF token mismatch
+    if (error.response?.status === 403 &&
+      error.response?.data?.error === 'CSRF_TOKEN_MISMATCH') {
+      try {
+        const newToken = await refreshCSRFToken();
+        const originalRequest = error.config;
+        originalRequest.headers['X-CSRF-Token'] = newToken;
+        return secureAxios(originalRequest);
+      } catch (retryError) {
+        console.error('Failed to retry productquery secureAxios request with new CSRF token:', retryError);
+      }
+    }
+
+    if (error.response?.status === 401) {
+      // Redirect to login on unauthorized
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 const getUserId = async () => {
   const res = await secureAxios.get("/creds/me");

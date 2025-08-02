@@ -76,7 +76,7 @@ export const Haircare = () => {
           toast.success("Successfully added item to your cart");
         },
         onError: (error) => {
-          console.error("Error adding to cart:", error.response?.data || error.message);
+          // console.error("Error adding to cart:", error.response?.data || error.message);
           toast.error(error.response?.data?.message || "Failed to add the item to your cart");
         },
       }
@@ -134,7 +134,7 @@ export const Haircare = () => {
           navigate(`/mycart`);
         },
         onError: (error) => {
-          console.error("Error adding to cart:", error.response?.data || error.message);
+          // console.error("Error adding to cart:", error.response?.data || error.message);
           toast.error(error.response?.data?.message || "Failed to add the item to your cart");
         },
       }
@@ -419,7 +419,7 @@ export const haircare = () => {
           toast.success("Successfully added item to your cart");
         },
         onError: (error) => {
-          console.error("Error adding to cart:", error.response?.data || error.message);
+          // console.error("Error adding to cart:", error.response?.data || error.message);
           toast.error(error.response?.data?.message || "Failed to add the item to your cart");
         },
       }
@@ -477,7 +477,7 @@ export const haircare = () => {
           navigate(`/mycart`);
         },
         onError: (error) => {
-          console.error("Error adding to cart:", error.response?.data || error.message);
+          // console.error("Error adding to cart:", error.response?.data || error.message);
           toast.error(error.response?.data?.message || "Failed to add the item to your cart");
         },
       }

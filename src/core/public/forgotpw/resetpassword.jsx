@@ -1,11 +1,12 @@
+import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DOMPurify from 'dompurify';
 import zxcvbn from 'zxcvbn';
 import Footer from '../../../components/footer';
 import Navbar from '../../../components/navbar';
+import { postWithCSRF } from '../../../utils/api';
 
 export default function ResetPasswordForm() {
     const [newPassword, setNewPassword] = useState('');
@@ -84,14 +85,10 @@ export default function ResetPasswordForm() {
 
         setIsSubmitting(true);
         try {
-            const response = await fetch('https://localhost:3000/api/creds/reset-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token, newPassword: sanitizedNewPassword }),
-                credentials: 'include',
-            });
+            const response = await postWithCSRF(
+                'https://localhost:3000/api/creds/reset-password',
+                { token, newPassword: sanitizedNewPassword }
+            );
 
             const data = await response.json();
             if (response.ok) {
@@ -101,7 +98,7 @@ export default function ResetPasswordForm() {
                 toast.error(data.message || data.error || "Failed to reset password");
             }
         } catch (error) {
-            console.error("Error resetting password:", error);
+            // console.error("Error resetting password:", error);
             toast.error("Error resetting password: Network error");
         } finally {
             setIsSubmitting(false);

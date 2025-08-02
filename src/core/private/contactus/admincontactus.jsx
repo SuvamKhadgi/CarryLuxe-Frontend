@@ -1,9 +1,10 @@
 import { Download, Eye, Mail, RefreshCw, Search, Trash2, User } from 'lucide-react';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Side from '../../../components/sidebar';
+import { deleteWithCSRF, putWithCSRF } from '../../../utils/api';
 
 const AdminContactUI = () => {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const AdminContactUI = () => {
       const data = await response.json();
       setContacts(data);
     } catch (error) {
-      console.error('Error fetching contacts:', error);
+      // console.error('Error fetching contacts:', error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -68,14 +69,11 @@ const AdminContactUI = () => {
 
   const handleStatusChange = async (contactId, newStatus) => {
     try {
-      const response = await fetch(`https://localhost:3000/api/creds/contacts/${contactId}/status`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ status: newStatus }),
-      });
+      const response = await putWithCSRF(
+        `https://localhost:3000/api/creds/contacts/${contactId}/status`,
+        { status: newStatus }
+      );
+
       if (!response.ok) throw new Error('Failed to update contact status');
       const updatedContact = await response.json();
       setContacts(contacts.map(contact =>
@@ -86,7 +84,7 @@ const AdminContactUI = () => {
       }
       toast.success('Status updated successfully');
     } catch (error) {
-      console.error('Error updating status:', error);
+      // console.error('Error updating status:', error);
       setError(error.message);
       toast.error('Failed to update status');
     }
@@ -95,10 +93,10 @@ const AdminContactUI = () => {
   const handleDelete = async (contactId) => {
     if (window.confirm('Are you sure you want to delete this contact?')) {
       try {
-        const response = await fetch(`https://localhost:3000/api/creds/contacts/${contactId}`, {
-          method: 'DELETE',
-          credentials: 'include',
-        });
+        const response = await deleteWithCSRF(
+          `https://localhost:3000/api/creds/contacts/${contactId}`
+        );
+
         if (!response.ok) throw new Error('Failed to delete contact');
         setContacts(contacts.filter(contact => contact._id !== contactId));
         if (selectedContact && selectedContact._id === contactId) {
@@ -106,7 +104,7 @@ const AdminContactUI = () => {
         }
         toast.success('Contact deleted successfully');
       } catch (error) {
-        console.error('Error deleting contact:', error);
+        // console.error('Error deleting contact:', error);
         setError(error.message);
         toast.error('Failed to delete contact');
       }

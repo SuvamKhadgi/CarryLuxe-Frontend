@@ -44,7 +44,7 @@ function Users() {
       await navigator.clipboard.writeText(text);
       toast.success('Copied to clipboard!');
     } catch (error) {
-      console.error('Clipboard copy failed:', error);
+      // console.error('Clipboard copy failed:', error);
       toast.error('Failed to copy');
     }
   };

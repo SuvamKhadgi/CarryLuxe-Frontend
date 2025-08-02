@@ -118,136 +118,134 @@ function Additems() {
   };
 
   if (loading) return <div className="text-center p-8">Loading...</div>;
-
-  return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
-      <Side />
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-4">
-            <div className="flex items-center justify-center mb-2">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
-                <ShoppingBag className="w-6 h-6 text-white" />
-              </div>
+return (
+  <div className="flex min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-100 overflow-hidden">
+    <Side />
+    <div className="flex-1 overflow-y-auto p-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-4">
+          <div className="flex items-center justify-center mb-2">
+            <div className="p-2 bg-gradient-to-r from-emerald-500 to-emerald-700 rounded-full">
+              <ShoppingBag className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-1">Add New Product</h1>
-            <p className="text-sm text-gray-600">Create a new bag listing for luxecarry</p>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
-                <input
-                  type="text"
-                  {...register('item_name', { required: true })}
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                  placeholder="Enter item name"
-                />
-                {errors.item_name && <span className="text-red-500 text-xs">Item name is required</span>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  {...register('description', { required: true })}
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                  placeholder="Enter description"
-                />
-                {errors.description && <span className="text-red-500 text-xs">Description is required</span>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                <input
-                  type="number"
-                  {...register('item_quantity', { required: true, min: 1 })}
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                  placeholder="Enter quantity"
-                />
-                {errors.item_quantity && <span className="text-red-500 text-xs">Quantity is required</span>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-                <input
-                  type="number"
-                  {...register('item_price', { required: true, min: 1 })}
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                  placeholder="Enter price"
-                />
-                {errors.item_price && <span className="text-red-500 text-xs">Price is required</span>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select
-                  {...register('item_type', { required: true })}
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                >
-                  <option value="">Select Category</option>
-                  {Object.keys(subOptions).map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-                {errors.item_type && <span className="text-red-500 text-xs">Category is required</span>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
-                <select
-                  {...register('sub_item_type', { required: true })}
-                  value={watch('sub_item_type')}
-                  onChange={(e) => setValue('sub_item_type', DOMPurify.sanitize(e.target.value))}
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                  disabled={!selectedCategory}
-                >
-                  <option value="">Select Subcategory</option>
-                  {selectedCategory &&
-                    subOptions[selectedCategory]?.map((sub) => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                </select>
-                {errors.sub_item_type && <span className="text-red-500 text-xs">Subcategory is required</span>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
-                <input
-                  type="file"
-                  {...register('image', {
-                    required: true,
-                    validate: {
-                      acceptedFormats: (files) => {
-                        if (!files || files.length === 0) return false;
-                        const file = files[0];
-                        return ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
-                      },
-                      maxSize: (files) => {
-                        if (!files || files.length === 0) return false;
-                        const file = files[0];
-                        return file.size <= 2 * 1024 * 1024;
-                      },
-                    },
-                  })}
-                  accept="image/jpeg,image/png,image/gif"
-                  onChange={handleImageChange}
-                  className="w-full p-3 border border-gray-300 rounded-md"
-                />
-                {errors.image?.type === "required" && <span className="text-red-500 text-xs">Image is required</span>}
-                {errors.image?.type === "acceptedFormats" && <span className="text-red-500 text-xs">Invalid image format</span>}
-                {errors.image?.type === "maxSize" && <span className="text-red-500 text-xs">Image must be less than 2MB</span>}
-                {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded" />}
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
+          <h1 className="text-2xl font-extrabold text-emerald-700 mb-1">Add New Product</h1>
+          <p className="text-sm text-emerald-600">Create a new bag listing for Luxecarry</p>
+        </div>
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-emerald-100">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-emerald-700 mb-1">Item Name</label>
+              <input
+                type="text"
+                {...register('item_name', { required: true })}
+                className="w-full p-3 border border-emerald-200 rounded-md"
+                placeholder="Enter item name"
+              />
+              {errors.item_name && <span className="text-red-500 text-xs">Item name is required</span>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-emerald-700 mb-1">Description</label>
+              <textarea
+                {...register('description', { required: true })}
+                className="w-full p-3 border border-emerald-200 rounded-md"
+                placeholder="Enter description"
+              />
+              {errors.description && <span className="text-red-500 text-xs">Description is required</span>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-emerald-700 mb-1">Quantity</label>
+              <input
+                type="number"
+                {...register('item_quantity', { required: true, min: 1 })}
+                className="w-full p-3 border border-emerald-200 rounded-md"
+                placeholder="Enter quantity"
+              />
+              {errors.item_quantity && <span className="text-red-500 text-xs">Quantity is required</span>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-emerald-700 mb-1">Price</label>
+              <input
+                type="number"
+                {...register('item_price', { required: true, min: 1 })}
+                className="w-full p-3 border border-emerald-200 rounded-md"
+                placeholder="Enter price"
+              />
+              {errors.item_price && <span className="text-red-500 text-xs">Price is required</span>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-emerald-700 mb-1">Category</label>
+              <select
+                {...register('item_type', { required: true })}
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className="w-full p-3 border border-emerald-200 rounded-md"
               >
-                {isLoading ? "Saving..." : "Add Product"}
-              </button>
-            </form>
-          </div>
+                <option value="">Select Category</option>
+                {Object.keys(subOptions).map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              {errors.item_type && <span className="text-red-500 text-xs">Category is required</span>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-emerald-700 mb-1">Subcategory</label>
+              <select
+                {...register('sub_item_type', { required: true })}
+                value={watch('sub_item_type')}
+                onChange={(e) => setValue('sub_item_type', DOMPurify.sanitize(e.target.value))}
+                className="w-full p-3 border border-emerald-200 rounded-md"
+                disabled={!selectedCategory}
+              >
+                <option value="">Select Subcategory</option>
+                {selectedCategory &&
+                  subOptions[selectedCategory]?.map((sub) => (
+                    <option key={sub} value={sub}>{sub}</option>
+                  ))}
+              </select>
+              {errors.sub_item_type && <span className="text-red-500 text-xs">Subcategory is required</span>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-emerald-700 mb-1">Image</label>
+              <input
+                type="file"
+                {...register('image', {
+                  required: true,
+                  validate: {
+                    acceptedFormats: (files) => {
+                      if (!files || files.length === 0) return false;
+                      const file = files[0];
+                      return ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
+                    },
+                    maxSize: (files) => {
+                      if (!files || files.length === 0) return false;
+                      const file = files[0];
+                      return file.size <= 2 * 1024 * 1024;
+                    },
+                  },
+                })}
+                accept="image/jpeg,image/png,image/gif"
+                onChange={handleImageChange}
+                className="w-full p-3 border border-emerald-200 rounded-md"
+              />
+              {errors.image?.type === "required" && <span className="text-red-500 text-xs">Image is required</span>}
+              {errors.image?.type === "acceptedFormats" && <span className="text-red-500 text-xs">Invalid image format</span>}
+              {errors.image?.type === "maxSize" && <span className="text-red-500 text-xs">Image must be less than 2MB</span>}
+              {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded" />}
+            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 font-semibold"
+            >
+              {isLoading ? "Saving..." : "Add Product"}
+            </button>
+          </form>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
-  );
+    <ToastContainer position="top-right" autoClose={3000} />
+  </div>
+);
 }
-
 export default Additems;

@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import DOMPurify from 'dompurify';
+import { getCSRFToken } from '../../../utils/csrf';
 
 // Secure axios instance
 const secureAxios = axios.create({
@@ -12,10 +13,46 @@ const secureAxios = axios.create({
   withCredentials: true,
 });
 
+// Add CSRF token interceptor to secureAxios instance
+secureAxios.interceptors.request.use(async (config) => {
+  // Skip CSRF token for login and signup endpoints
+  const isAuthEndpoint = config.url?.includes('/creds/login') ||
+    config.url?.includes('/creds/signup') ||
+    config.url?.includes('/login') ||
+    config.url?.includes('/signup');
+
+  // Add CSRF token to non-GET requests (except auth endpoints)
+  if (config.method !== 'get' && !isAuthEndpoint) {
+    try {
+      const csrfToken = await getCSRFToken();
+      if (csrfToken) {
+        config.headers['X-CSRF-Token'] = csrfToken;
+      }
+    } catch (error) {
+      console.warn('Failed to get CSRF token for secureAxios:', error);
+    }
+  }
+  return config;
+});
+
 // Response interceptor
 secureAxios.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    // Handle CSRF token mismatch
+    if (error.response?.status === 403 &&
+      error.response?.data?.error === 'CSRF_TOKEN_MISMATCH') {
+      try {
+        const { refreshCSRFToken } = await import('../../../utils/csrf');
+        const newToken = await refreshCSRFToken();
+        const originalRequest = error.config;
+        originalRequest.headers['X-CSRF-Token'] = newToken;
+        return secureAxios(originalRequest);
+      } catch (retryError) {
+        console.error('Failed to retry secureAxios request with new CSRF token:', retryError);
+      }
+    }
+
     if (error.response?.status === 401) {
       window.location.href = "/login";
     }
@@ -52,7 +89,7 @@ export const useSaveItem = () => {
       return secureAxios.post("/items", data);
     },
     onError: (error) => {
-      console.error("Save item error:", error.message);
+      // console.error("Save item error:", error.message);
     },
   });
 };
@@ -67,7 +104,7 @@ export const useDeleteItem = () => {
       return secureAxios.delete(`/items/${DOMPurify.sanitize(id)}`);
     },
     onError: (error) => {
-      console.error("Delete item error:", error.message);
+      // console.error("Delete item error:", error.message);
     },
   });
 };
@@ -87,7 +124,7 @@ export const useUpdateItem = () => {
       return secureAxios.put(`/items/${DOMPurify.sanitize(id)}`, data);
     },
     onError: (error) => {
-      console.error("Update item error:", error.message);
+      // console.error("Update item error:", error.message);
     },
   });
 };

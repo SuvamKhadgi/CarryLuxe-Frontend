@@ -521,218 +521,225 @@ export const Womancare = () => {
     return <div>Error fetching data!</div>;
   }
 
-  return (
-    <>
-    
-      <div className="flex items-center justify-center py-8">
-        <div className="border-t border-gray-900 w-24"></div>
-        <Typography className="mx-14 text-2xl font-semibold">Party Bags</Typography>
-        <div className="border-t border-gray-900 w-24"></div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 px-6 py-4">
-        {featuredProducts.map((product) => (
-          <Card
-            key={product._id}
-            className="w-full max-w-3xs mx-auto shadow-lg rounded-4xl overflow-hidden cursor-pointer"
-            onClick={() => handleOpenModal(product)}
-          >
-            <CardHeader shadow={false} floated={false} className="h-40">
-              <div className="flex justify-end">
-                <IconButton
-                  variant="text"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    await handleToggleWishlist(product._id);
-                  }}
-                  className="p-2"
-                >
-                  {wishlist?.some((item) => item.productId === product._id) ? (
-                    <HeartFilled className="h-6 w-6 text-red-500" />
-                  ) : (
-                    <HeartOutline className="h-6 w-6 text-gray-500" />
-                  )}
-                </IconButton>
-              </div>
-              <img
-                src={`https://localhost:3000/uploads/${product.image}`}
-                alt={product.item_name}
-                className="max-h-30 w-full object-contain"
-              />
-            </CardHeader>
-            <CardBody className="p-0">
-              <div className="flex justify-center items-center">
-                <Typography color="blue-gray" className="font-bold text-lg">
-                  {product.item_name}
-                </Typography>
-              </div>
-              <Typography
-                color="blue-gray"
-                className="font-bold text-lg flex items-center justify-center"
+ return (
+  <>
+    {/* Section Title */}
+    <div className="flex items-center justify-center py-10">
+      <div className="border-t border-emerald-400 w-24"></div>
+      <Typography className="mx-14 text-3xl font-extrabold text-emerald-700 tracking-tight drop-shadow">
+        Party Bags
+      </Typography>
+      <div className="border-t border-emerald-400 w-24"></div>
+    </div>
+    {/* Featured Product Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 px-6 py-4">
+      {(featuredProducts || []).map((product) => (
+        <Card
+          key={product._id}
+          className="w-full max-w-3xs mx-auto shadow-xl rounded-3xl overflow-hidden cursor-pointer border border-emerald-100 hover:-translate-y-2 hover:shadow-emerald-200 transition"
+          onClick={() => handleOpenModal(product)}
+        >
+          <CardHeader shadow={false} floated={false} className="h-44 bg-gradient-to-b from-emerald-50 to-white flex flex-col justify-between">
+            <div className="flex justify-end">
+              <IconButton
+                variant="text"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  await handleToggleWishlist(product._id);
+                }}
+                className="p-2"
               >
-                Price: Rs.{product.item_price}
-              </Typography>
-              <div className="flex justify-center items-center mt-2">
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDecrease(product._id);
-                  }}
-                  className="bg-gray-300 px-3 py-1 text-lg font-bold text-black"
-                  disabled={(quantities[product._id] || 1) <= 1}
-                >
-                  -
-                </Button>
-                <span className="mx-10 text-lg font-semibold">
-                  {quantities[product._id] || 1}
-                </span>
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleIncrease(product._id);
-                  }}
-                  className="bg-gray-300 px-3 py-1 text-lg font-extrabold text-black"
-                  disabled={(quantities[product._id] || 1) >= product.item_quantity}
-                >
-                  +
-                </Button>
-              </div>
-            </CardBody>
-            <CardFooter className="pt-4 pb-4 flex px-11 ">
-              <Button
-                ripple={false}
-                fullWidth={true}
-                className="bg-[#D72638] py-0  rounded-r text-white shadow-md hover:scale-105 transition-transform duration-200  hover:bg-green-300 hover:text-black"
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  await handleBuyNow(product._id);
-                }}
-                disabled={isAddingToCart}
-              ><ShoppingBagOutlined />
-                Buy Now
-              </Button>
-              <Button
-                ripple={false}
-                fullWidth={true}
-                className="bg-[#333333] flex-1/12 p-2 rounded-l text-white shadow-md hover:scale-105 transition-transform duration-200"
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  await handleAddToCart(product._id);
-                }}
-                disabled={isAddingToCart}
-              ><AddShoppingCartOutlined />
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-      <center className="mb-4">
-        <button className="bg-gray-200 text-black font-semibold px-8 py-2 rounded-lg shadow-md hover:bg-gray-300 transition-colors duration-200">
-          <a href="/partybags">View More Bags</a>
-        </button>
-      </center>
-      {selectedProduct && (
-        <Dialog open={openModal} handler={handleCloseModal} className="max-w-lg " backdropClassName="bg-transparent ">
-          <DialogHeader className="flex justify-between items-center ">
-            <Typography variant="h5" color="blue-gray">
-              {selectedProduct.item_name}
-            </Typography>
-            <IconButton
-              variant="text"
-              onClick={async () => await handleToggleWishlist(selectedProduct._id)}
-              className="p-2"
-            >
-              {wishlist?.some((item) => item.productId === selectedProduct._id) ? (
-                <HeartFilled className="h-6 w-6 text-red-500" />
-              ) : (
-                <HeartOutline className="h-6 w-6 text-gray-500" />
-              )}
-            </IconButton>
-          </DialogHeader>
-          <DialogBody className="flex flex-col gap-4">
+                {wishlist?.some((item) => item.productId === product._id) ? (
+                  <HeartFilled className="h-6 w-6 text-red-500" />
+                ) : (
+                  <HeartOutline className="h-6 w-6 text-emerald-400" />
+                )}
+              </IconButton>
+            </div>
             <img
-              src={`https://localhost:3000/uploads/${selectedProduct.image}`}
-              alt={selectedProduct.item_name}
-              className="w-full h-64 object-contain rounded-lg"
+              src={`https://localhost:3000/uploads/${product.image}`}
+              alt={product.item_name}
+              className="max-h-36 w-full object-contain drop-shadow-md"
             />
-            <Typography color="blue-gray" className="font-bold">
-              Price: Rs.{selectedProduct.item_price}
-            </Typography>
-            <Typography color="blue-gray">
-              Available Quantity: {selectedProduct.item_quantity || "N/A"}
-            </Typography>
-            <Typography color="blue-gray">
-              Description: {selectedProduct.description || "No description available"}
-            </Typography>
-            <div className="flex items-center gap-4">
-              <Typography color="blue-gray" className="font-semibold">
-                Quantity:
+          </CardHeader>
+          <CardBody className="p-0">
+            <div className="flex justify-center items-center mt-2">
+              <Typography color="emerald" className="font-bold text-lg text-center truncate">
+                {product.item_name}
               </Typography>
+            </div>
+            <Typography
+              color="emerald"
+              className="font-bold text-lg flex items-center justify-center text-emerald-700"
+            >
+              Price: Rs.{product.item_price}
+            </Typography>
+            <div className="flex justify-center items-center mt-2 gap-2">
               <Button
-                onClick={() => handleDecrease(selectedProduct._id)}
-                className="bg-gray-300 px-3 py-1 text-lg font-bold text-black"
-                disabled={(quantities[selectedProduct._id] || 1) <= 1}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDecrease(product._id);
+                }}
+                className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 text-lg font-bold shadow hover:bg-emerald-200"
+                disabled={(quantities[product._id] || 1) <= 1}
               >
                 -
               </Button>
-              <span className="text-lg font-semibold">
-                {quantities[selectedProduct._id] || 1}
+              <span className="mx-6 text-lg font-semibold">
+                {quantities[product._id] || 1}
               </span>
               <Button
-                onClick={() => handleIncrease(selectedProduct._id)}
-                className="bg-gray-300 px-3 py-1 text-lg font-extrabold text-black"
-                disabled={(quantities[selectedProduct._id] || 1) >= selectedProduct.item_quantity}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleIncrease(product._id);
+                }}
+                className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 text-lg font-bold shadow hover:bg-emerald-200"
+                disabled={(quantities[product._id] || 1) >= product.item_quantity}
               >
                 +
               </Button>
             </div>
-          </DialogBody>
-          <DialogFooter className="flex gap-4">
+          </CardBody>
+          <CardFooter className="pt-4 pb-4 flex gap-4 px-6">
             <Button
-              variant="outlined"
-              color="red"
-              onClick={handleCloseModal}
-              className="rounded-2xl"
-            >
-              Close
-            </Button>
-            <Button
-              className="bg-black rounded-2xl text-white  hover:bg-green-300 hover:text-black"
-              onClick={async () => await handleAddToCart(selectedProduct._id)}
+              ripple={false}
+              fullWidth={true}
+              className="bg-gradient-to-r from-emerald-700 to-emerald-500 py-2 rounded-xl text-white shadow-md hover:from-green-400 hover:to-green-600 hover:text-black transition"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await handleBuyNow(product._id);
+              }}
               disabled={isAddingToCart}
             >
-              <AddShoppingCartOutlined />
-              Add to Cart
-            </Button>
-            <Button
-              className="bg-[#D72638] rounded-2xl text-white   hover:bg-green-300 hover:text-black"
-              onClick={async () => await handleBuyNow(selectedProduct._id)}
-              disabled={isAddingToCart}
-            >
-              <ShoppingBagOutlined />
+              <ShoppingBagOutlined className="mr-2" />
               Buy Now
             </Button>
-          </DialogFooter>
-        </Dialog>
-      )}
-      <Toaster
-        position="top-right"
-        autoClose={2500}
-        containerStyle={{
-          top: "8rem",
-          right: "1rem",
-        }}
-        hideProgressBar={false}
-        className="toast-mt-32"
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
-    </>
-  );
+            <Button
+              ripple={false}
+              fullWidth={true}
+              className="bg-gradient-to-r from-emerald-900 to-emerald-700 p-2 rounded-xl text-white shadow-md hover:from-green-600 hover:to-green-700 hover:text-black transition"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await handleAddToCart(product._id);
+              }}
+              disabled={isAddingToCart}
+            >
+              <AddShoppingCartOutlined className="mr-1" />
+              Add
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+    <center className="mb-8">
+      <button className="bg-emerald-100 text-emerald-700 font-semibold px-8 py-2 rounded-lg shadow-md hover:bg-emerald-200 transition-colors duration-200">
+        <a href="/partybags">View More Bags</a>
+      </button>
+    </center>
+    {/* Product Modal */}
+    {selectedProduct && (
+      <Dialog open={openModal} handler={handleCloseModal} className="max-w-lg" backdropClassName="bg-transparent">
+        <DialogHeader className="flex justify-between items-center">
+          <Typography variant="h5" color="emerald" className="text-emerald-700">
+            {selectedProduct.item_name}
+          </Typography>
+          <IconButton
+            variant="text"
+            onClick={async () => await handleToggleWishlist(selectedProduct._id)}
+            className="p-2"
+          >
+            {wishlist?.some((item) => item.productId === selectedProduct._id) ? (
+              <HeartFilled className="h-6 w-6 text-red-500" />
+            ) : (
+              <HeartOutline className="h-6 w-6 text-emerald-400" />
+            )}
+          </IconButton>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
+          <img
+            src={`https://localhost:3000/uploads/${selectedProduct.image}`}
+            alt={selectedProduct.item_name}
+            className="w-full h-64 object-contain rounded-xl bg-emerald-50 border"
+          />
+          <Typography color="emerald" className="font-bold text-lg text-emerald-700">
+            Price: Rs.{selectedProduct.item_price}
+          </Typography>
+          <Typography color="emerald" className="text-md text-emerald-700">
+            Available Quantity: {selectedProduct.item_quantity || "N/A"}
+          </Typography>
+          <Typography color="blue-gray">
+            Description: {selectedProduct.description || "No description available"}
+          </Typography>
+          <div className="flex items-center gap-4">
+            <Typography color="emerald" className="font-semibold">
+              Quantity:
+            </Typography>
+            <Button
+              onClick={() => handleDecrease(selectedProduct._id)}
+              className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 text-lg font-bold shadow hover:bg-emerald-200"
+              disabled={(quantities[selectedProduct._id] || 1) <= 1}
+            >
+              -
+            </Button>
+            <span className="text-lg font-semibold">
+              {quantities[selectedProduct._id] || 1}
+            </span>
+            <Button
+              onClick={() => handleIncrease(selectedProduct._id)}
+              className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 text-lg font-bold shadow hover:bg-emerald-200"
+              disabled={(quantities[selectedProduct._id] || 1) >= selectedProduct.item_quantity}
+            >
+              +
+            </Button>
+          </div>
+        </DialogBody>
+        <DialogFooter className="flex gap-4">
+          <Button
+            variant="outlined"
+            color="red"
+            onClick={handleCloseModal}
+            className="rounded-xl"
+          >
+            Close
+          </Button>
+          <Button
+            className="bg-gradient-to-r from-emerald-900 to-emerald-700 rounded-xl text-white hover:from-green-600 hover:to-green-700 hover:text-black"
+            onClick={async () => await handleAddToCart(selectedProduct._id)}
+            disabled={isAddingToCart}
+          >
+            <AddShoppingCartOutlined className="mr-2" />
+            Add to Cart
+          </Button>
+          <Button
+            className="bg-gradient-to-r from-emerald-700 to-emerald-500 rounded-xl text-white hover:from-green-400 hover:to-green-600 hover:text-black"
+            onClick={async () => await handleBuyNow(selectedProduct._id)}
+            disabled={isAddingToCart}
+          >
+            <ShoppingBagOutlined className="mr-2" />
+            Buy Now
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    )}
+    <Toaster
+      position="top-right"
+      autoClose={2500}
+      containerStyle={{
+        top: "8rem",
+        right: "1rem",
+      }}
+      hideProgressBar={false}
+      className="toast-mt-32"
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="colored"
+    />
+  </>
+);
 };
 
 export default WomanCare;
